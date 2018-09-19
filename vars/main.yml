@@ -1,2 +1,18 @@
 ---
 # Role variables
+
+# Supported distributions
+
+win_domain_users_supported_distributions:
+  - centos
+  - fedora
+  - rhel
+
+# Supported distributions versions
+
+win_domain_users_supported_versions:
+  centos: 6
+  fedora: 28
+  rhel: 6
+
+# TODO: Get real values (Windows 10 pro)

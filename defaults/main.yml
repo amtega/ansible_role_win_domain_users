@@ -1,2 +1,44 @@
 ---
 # Role default lower priority variables
+
+# List of dicts with users to configure. The dicts have the same attributes
+# that the ones expected by the ansible win_domain_user module.
+# https://docs.ansible.com/ansible/latest/modules/win_domain_user_module.html
+# For example:
+#
+# win_domain_users:
+#   - account_locked: true
+#     attributes:
+#       extensionAttribute1:
+#       extensionAttribute2:
+#     city: Springfield
+#     company: E-corp
+#     country: Asgard
+#     description: Test user
+#     email: alice@mydomain.local
+#     enabled: true
+#     firstname: Alice
+#     groups:
+#       - Domain Admins
+#     groups_action: add
+#     name: alice
+#     password: 41c3P4ssw0rd
+#     password_expired: false
+#     password_never_expires: false
+#     path: ou=test,dc=mydomain,dc=local
+#     postal_code: 15175
+#     state: Asgard
+#     state_province: Wakanda
+#     street: Elm street
+#     surname: Carroll
+#     update_password: on_create
+#     upn: alice@mydomain.local
+#     user_cannot_change_password: false
+
+win_domain_users: []
+
+# Dicitionary with the defaults options to use if no other ones are specified in
+# the `win_domain_users` variable. The members of the dict are the same attributes
+# that the ones expected by the ansible win_domain_user module
+
+win_domain_users_defaults: {}
