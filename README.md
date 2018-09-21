@@ -1,6 +1,6 @@
 # Ansible win_domain_users role
 
-This is an [Ansible](http://www.ansible.com) role which manages windows domain users through the `win_domain_user` module.
+This is an [Ansible](http://www.ansible.com) role which manages windows domain users through the [`win_domain_user`](https://docs.ansible.com/ansible/latest/modules/win_domain_user_module.html) module.
 
 ## Requirements
 
@@ -24,13 +24,18 @@ This is an example playbook:
 - hosts: windows_command_host
   roles:
     - amtega.win_domain_users
-  vars:    
+  vars:
+    win_domain_users_defaults:
+      path: ou=test,dc=domain,dc=local
+      city: Sometown
+      state_province: IN
+      country: US
+        
     win_domain_users:
       - name: alice
         firstname: Alice
         surname: Carroll
         password: 41c3P4ssw0rd
-        path: ou=test,dc=domain,dc=local
         state: present
 
       - name: bob
@@ -38,16 +43,13 @@ This is an example playbook:
         surname: Smith
         company: BobCo
         password: B0bP4ssw0rd
-        state: present
         groups:
           - Domain Admins
         street: 123 4th St.
-        city: Sometown
-        state_province: IN
         postal_code: 12345
-        country: US
         attributes:
           telephoneNumber: 555-123456
+        state: present
 ```
 
 
