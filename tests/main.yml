@@ -1,0 +1,186 @@
+---
+# Tasks for testing role
+
+
+- name: run win_domain_users test
+  hosts: domain_children
+  vars:
+    test_ad_pdc: DC01
+    test_ad_user: ansible_test
+    test_ad_ou: CN=Users,DC=domain,DC=local
+    test_ad_group: ansible_test_group
+    test_ad_group_ou: "{{ test_ad_ou }}"
+    test_ad_max_users: 4
+    test_domain_password: "{{ man_domain_setup_password }}"
+    test_domain_username: "{{ man_domain_setup_username }}"
+    # ansible-windows/vagrant/inventory.yml have transport to basic, we need
+    #  to rewrite it to work
+    ansible_winrm_transport: credssp
+  tasks:
+    - name: check mandatory test parameters have been set
+      check_mode: no
+      assert:
+        that:
+          "{{ item }} is defined"
+        msg: "Undefined mandatory var {{ item }}"
+      loop:
+        - test_ad_user
+        - test_ad_group
+        - test_ad_group_ou
+        - test_ad_max_users
+
+    - name: ensure win_domain_user is working
+      block:
+        - name: ensure the RSAT-AD-PowerShell feature is installed
+          win_feature:
+            name:
+              - RSAT-AD-PowerShell
+            state: present
+          register: ad_feature_result
+
+        - name: reboot host if required
+          win_reboot:
+          when: ad_feature_result.reboot_required
+
+        - win_ping:
+
+        - name: delete without role
+          win_domain_user:
+            name: "{{ test_ad_user }}_{{ test_instance }}"
+            domain_server: "{{ test_ad_pdc }}"
+            state: absent
+          with_items: "{{ range(test_ad_max_users) | list }}"
+          loop_control:
+            loop_var: test_instance
+
+        - name: query without role
+          win_domain_user:
+            name: "{{ test_ad_user }}"
+            domain_server: "{{ test_ad_pdc }}"
+            state: query
+          register: win_domain_user_query_result
+
+        - debug:
+            var: win_domain_user_query_result
+
+        - name: add without role
+          win_domain_user:
+            name: "{{ test_ad_user }}" #_{{ test_instance }}"
+            upn: '{{ test_ad_user }}@{{man_domain_setup_domain_name}}'
+            description: '{{ test_ad_user }} Domain Account'
+            password: '{{man_domain_setup_password}}'
+            update_password: on_create
+            firstname: "ansible test {{ test_instance }}"
+            surname: test
+            domain_server: "{{ test_ad_pdc }}"
+            email: dont_ask@dont_respond.never.com
+            account_locked: false
+            city: springfield
+            company: evil_inc
+            attributes:
+              telephoneNumber: 555-123456
+            state: present
+          register: win_domain_user_result
+          with_items: "{{ range(test_ad_max_users) | list }}"
+          loop_control:
+            loop_var: test_instance
+
+        - debug:
+            var: win_domain_user_result
+
+        - name: delete without role
+          win_domain_user:
+            name: "{{ test_ad_user }}"
+            domain_server: "{{ test_ad_pdc }}"
+            state: absent
+          with_items: "{{ range(test_ad_max_users) | list }}"
+          loop_control:
+            loop_var: test_instance
+
+      tags: win_domain_users::previous
+
+    - name: create test users
+      include_role:
+        name: amtega.win_domain_users
+      vars:
+        win_domain_users_defaults:
+          city: springfield
+          company: evil_inc
+
+        win_domain_users:
+          - name: "{{ test_ad_user }}-a-{{ test_instance }}"
+            upn: '{{ test_ad_user }}-a-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            description: '{{ test_ad_user }} Domain Account'
+            password: '{{man_domain_setup_password}}'
+            update_password: on_create
+            firstname: "ansible test {{ test_instance }}"
+            surname: test
+            domain_server: "{{ test_ad_pdc }}"
+            email: dont_ask@dont_respond.never.com
+            account_locked: false
+            attributes:
+              telephoneNumber: 555-123456
+            state: present
+          - name: "{{ test_ad_user }}-b-{{ test_instance }}"
+            upn: '{{ test_ad_user }}-b-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            path: "{{ test_ad_ou }}"
+            password: "Insecure.Password_{{ test_instance }}"
+            update_password: on_create
+            domain_server: "{{ test_ad_pdc }}"
+            state: present
+          - name: "{{ test_ad_user }}-c-{{ test_instance }}"
+            upn: '{{ test_ad_user }}-c-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            path: "{{ test_ad_ou }}"
+            password: "Insecure.Password_{{ test_instance }}"
+            update_password: on_create
+            domain_server: "{{ test_ad_pdc }}"
+            state: present
+
+            account_locked: no
+            attributes:
+              telephoneNumber: 555-123456
+              EmployeeID: 15123456
+              # extensionAttribute1: p_func
+
+            city: Teruel
+            company: Acme
+            country: ES
+            description: "Test user {{ test_ad_user }}-c-{{ test_instance }} please erase me."
+            domain_password: "{{ test_domain_password }}"
+            domain_username: "{{ test_domain_username }}"
+            email: dont_ask@dont_respond.never.com
+            enabled: true
+            firstname: Jane
+            groups:
+              - Domain Users
+            groups_action: add
+            # password_expired: no
+            password_never_expires: false
+            postal_code: 12345
+            state_province: TE
+            street: 13 Elm
+            surname: Doe
+            user_cannot_change_password: false
+
+      with_items: "{{ range(1, test_ad_max_users + 1)|list }}"
+      loop_control:
+        loop_var: test_instance
+
+      tags: win_domain_users::create
+
+    - name: cleanup test users
+      include_role:
+        name: amtega.win_domain_users
+      vars:
+        win_domain_users:
+          - name: "{{ test_ad_user }}-a-{{ test_instance }}"
+            state: absent
+          - name: "{{ test_ad_user }}-b-{{ test_instance }}"
+            state: absent
+          - name: "{{ test_ad_user }}-c-{{ test_instance }}"
+            state: absent
+      with_items: "{{ range(1, test_ad_max_users + 1)|list }}"
+      loop_control:
+        loop_var: test_instance
+
+      tags: win_domain_users::cleanup
