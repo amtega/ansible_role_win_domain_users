@@ -4,7 +4,7 @@ This is an [Ansible](http://www.ansible.com) role which manages windows domain u
 
 ## Requirements
 
-[Ansible 2.6+](http://docs.ansible.com/ansible/latest/intro_installation.html)
+[Ansible 2.7.1+](http://docs.ansible.com/ansible/latest/intro_installation.html)
 
 ## Role Variables
 
@@ -30,7 +30,7 @@ This is an example playbook:
       city: Sometown
       state_province: IN
       country: US
-        
+
     win_domain_users:
       - name: alice
         firstname: Alice
@@ -55,7 +55,36 @@ This is an example playbook:
 
 ## Testing
 
-A description of how to run tests of the role if available.
+Tests are based on vagrant virtual machines. You can setup vagrant engine
+quickly using the role [amtega.vagrant_engine](https://galaxy.ansible.com/amtega/vagrant_engine).
+
+Once you have vagrant and virtualbox, you can run the tests with the following
+commands:
+
+```shell
+$ cd amtega.win_domain_users/tests
+$ git clone https://github.com/jborean93/ansible-windows.git
+# Creating windows domain controler and client
+$ cd ansible-windows/vagrant/
+$ vim inventory.yml # Comment the following:
+        # SERVER2008:
+        #   ansible_host: 192.168.56.11
+        #   vagrant_box: jborean93/WindowsServer2008-x64
+        #   opt_domain_join_is_longhorn: yes
+        # SERVER2008R2:
+        #   ansible_host: 192.168.56.12
+        #   vagrant_box: jborean93/WindowsServer2008R2
+        # SERVER2012:
+        #   ansible_host: 192.168.56.13
+        #   vagrant_box: jborean93/WindowsServer2012
+        # SERVER2012R2:
+        #   ansible_host: 192.168.56.14
+        #   vagrant_box: jborean93/WindowsServer2012R2
+$ vagrant up # It takes a while
+$ cd ../..
+$ ansible-playbook main.yml
+```
+
 
 ## License
 
