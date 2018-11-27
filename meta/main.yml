@@ -15,9 +15,7 @@ galaxy_info:
       - 7
   - name: Windows
     versions:
-      - all
-      # Real version is missing in https://galaxy.ansible.com/api/v1/platforms/
-      # - microsoft windows server 2016 standard evaluation
+      - 2016
   galaxy_tags:
     - windows
     - activedirectory
