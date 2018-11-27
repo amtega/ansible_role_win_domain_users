@@ -102,7 +102,7 @@
       tags: win_domain_users::create_environment
 
 - name: run win_domain_users test
-  hosts: domain_children
+  hosts: test_machines
   vars:
     test_ad_pdc: DC01
     test_ad_user: ansible_test
@@ -112,8 +112,8 @@
     test_ad_max_users: 4
     test_domain_password: "{{ man_domain_setup_password }}"
     test_domain_username: "{{ man_domain_setup_username }}"
-    # ansible-windows/vagrant/inventory.yml have transport to basic, we need
-    #  to rewrite it to work
+    # ansible-windows/vagrant/inventory.yml have transport to ntlm, we need
+    #  to rewrite it to work (basic or ntlm make it fail)
     ansible_winrm_transport: credssp
   tasks:
     - name: check mandatory test parameters have been set
@@ -141,7 +141,12 @@
           win_reboot:
           when: ad_feature_result.reboot_required
 
-        - win_ping:
+        - name: win ping
+          win_ping:
+        - name: "win ping {{ test_ad_pdc }}"
+          win_ping:
+          delegate_to: "{{ test_ad_pdc }}"
+          run_once: true
 
         - name: delete without role
           win_domain_user:
