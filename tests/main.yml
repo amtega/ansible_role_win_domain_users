@@ -4,7 +4,8 @@
 - name: create testing environment
   hosts: localhost
   vars:
-    test_inventory_path: ansible-windows/vagrant/inventory.yml
+    test_inventory_dir: ansible-windows/vagrant
+    test_inventory_path: "{{ test_inventory_dir }}/inventory.yml"
   tasks:
     - name: create environment
       block:
@@ -64,6 +65,11 @@
             - "SERVER2012R2:"
             - "ansible_host: 192.168.56.14"
             - "vagrant_box: jborean93/WindowsServer2012R2"
+
+        - name: "add void {{ test_inventory_dir }}/ansible.cfg"
+          file:
+            path: "{{ test_inventory_dir }}/ansible.cfg"
+            state: touch
 
         - name: add host to group 'test_machines'
           add_host:
