@@ -28,10 +28,6 @@
                 dest: ansible-windows
                 update: no
 
-        - name: refresh inventory
-          meta: refresh_inventory
-          check_mode:  no
-
         - name: configure winrm port
           replace:
             path: "{{ test_inventory_path }}"
@@ -70,6 +66,10 @@
           file:
             path: "{{ test_inventory_dir }}/ansible.cfg"
             state: touch
+
+        - name: refresh inventory
+          meta: refresh_inventory
+          check_mode:  no
 
         - name: add host to group 'test_machines'
           add_host:
