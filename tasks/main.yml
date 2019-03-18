@@ -1,18 +1,40 @@
 ---
 # Role tasks
 
-- name: assert platform is supported
-  vars:
-    distribution: "{{ ansible_facts.distribution | lower }}"
-  assert:
-    that:
-      - distribution in win_domain_users_supported_distributions
-      - >-
-        ansible_facts.distribution_version
-        is version(win_domain_users_supported_versions[distribution], ">=")
+- name: check availability of cmdlets
+  win_shell: |
+    if (
+        (Get-Command -Name New-ADUser -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Get-ADUser -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Set-ADUser -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Remove-ADUser -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Get-ADPrincipalGroupMembership -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Add-ADGroupMember -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Remove-ADGroupMember -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Set-ADAccountPassword -ErrorAction SilentlyContinue) `
+        -and `
+        (Get-Command -Name Unlock-ADAccount -ErrorAction SilentlyContinue) `
+    ) {
+        $true
+    } else {
+        $false
+    }
+  register: cmdlets_check
   tags:
     - role::win_domain_users
     - role::win_domain_users::check
+
+- name: assert availability of cmdlets
+  assert:
+    that:
+      - (cmdlets_check.stdout | trim | bool)
 
 - name: setup windows users
   loop: "{{ win_domain_users }}"
