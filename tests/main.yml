@@ -63,9 +63,9 @@
         - name: add without role
           win_domain_user:
             name: "{{ test_ad_user }}" #_{{ test_instance }}"
-            upn: '{{ test_ad_user }}@{{man_domain_setup_domain_name}}'
+            upn: '{{ test_ad_user }}@{{ test_domain_name }}'
             description: '{{ test_ad_user }} Domain Account'
-            password: '{{man_domain_setup_password}}'
+            password: '{{ test_domain_password }}'
             update_password: on_create
             firstname: "ansible test {{ test_instance }}"
             surname: test
@@ -106,9 +106,9 @@
 
         win_domain_users:
           - name: "{{ test_ad_user }}-a-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-a-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            upn: '{{ test_ad_user }}-a-{{ test_instance }}@{{ test_domain_name }}'
             description: '{{ test_ad_user }} Domain Account'
-            password: '{{man_domain_setup_password}}'
+            password: '{{ test_domain_password }}'
             update_password: on_create
             firstname: "ansible test {{ test_instance }}"
             surname: test
@@ -119,14 +119,14 @@
               telephoneNumber: 555-123456
             state: present
           - name: "{{ test_ad_user }}-b-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-b-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            upn: '{{ test_ad_user }}-b-{{ test_instance }}@{{ test_domain_name }}'
             path: "{{ test_ad_ou }}"
             password: "Insecure.Password_{{ test_instance }}"
             update_password: on_create
             domain_server: "{{ test_ad_pdc }}"
             state: present
           - name: "{{ test_ad_user }}-c-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-c-{{ test_instance }}@{{man_domain_setup_domain_name}}'
+            upn: '{{ test_ad_user }}-c-{{ test_instance }}@{{ test_domain_name }}'
             path: "{{ test_ad_ou }}"
             password: "Insecure.Password_{{ test_instance }}"
             update_password: on_create
