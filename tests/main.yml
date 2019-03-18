@@ -14,10 +14,15 @@
           "{{ item }} is defined"
         msg: "Undefined mandatory var {{ item }}"
       loop:
+        - test_ad_pdc
         - test_ad_user
+        - test_ad_ou
         - test_ad_group
         - test_ad_group_ou
         - test_ad_max_users
+        - test_domain_name
+        - test_domain_username
+        - test_domain_password
 
     - name: ensure win_domain_user is working
       block:
@@ -27,17 +32,14 @@
               - RSAT-AD-PowerShell
             state: present
           register: ad_feature_result
+          failed_when: false # HACK Fails in windows 10
 
         - name: reboot host if required
           win_reboot:
-          when: ad_feature_result.reboot_required
+          when: ad_feature_result | default(False) is changed and ad_feature_result.reboot_required | default(False)
 
         - name: win ping
           win_ping:
-        - name: "win ping {{ test_ad_pdc }}"
-          win_ping:
-          delegate_to: "{{ test_ad_pdc }}"
-          run_once: true
 
         - name: delete without role
           win_domain_user:
