@@ -110,7 +110,7 @@
       tags: win_domain_users::create
 
     - debug:
-        var: win_domain_user_result
+        var: win_domain_users_result
 
     - name: cleanup test users
       include_role:
@@ -125,3 +125,6 @@
             state: absent
 
       tags: win_domain_users::cleanup
+
+    - debug:
+        var: win_domain_users_result

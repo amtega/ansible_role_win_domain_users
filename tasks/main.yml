@@ -26,7 +26,7 @@
     } else {
         $false
     }
-  register: cmdlets_check
+  register: win_domain_users_cmdlets_check
   tags:
     - role::win_domain_users
     - role::win_domain_users::check
@@ -34,7 +34,7 @@
 - name: assert availability of cmdlets
   assert:
     that:
-      - (cmdlets_check.stdout | trim | bool)
+      - (win_domain_users_cmdlets_check.stdout | trim | bool)
 
 - name: setup windows users
   loop: "{{ win_domain_users }}"
@@ -95,5 +95,6 @@
       {{ user.upn | default(win_domain_users_defaults.upn) | default(omit) }}
     user_cannot_change_password: >-
       {{ user.user_cannot_change_password | default(win_domain_users_defaults.user_cannot_change_password) | default(omit) }}
+  register: win_domain_users_result
   tags:
     - role::win_domain_users
