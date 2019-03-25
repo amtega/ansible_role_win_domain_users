@@ -43,59 +43,6 @@
         - name: win ping
           win_ping:
 
-        - name: delete without role
-          win_domain_user:
-            name: "{{ test_ad_user }}_{{ test_instance }}"
-            domain_server: "{{ test_ad_pdc }}"
-            state: absent
-          with_items: "{{ range(test_ad_max_users) | list }}"
-          loop_control:
-            loop_var: test_instance
-
-        - name: query without role
-          win_domain_user:
-            name: "{{ test_ad_user }}"
-            domain_server: "{{ test_ad_pdc }}"
-            state: query
-          register: win_domain_user_query_result
-
-        - debug:
-            var: win_domain_user_query_result
-
-        - name: add without role
-          win_domain_user:
-            name: "{{ test_ad_user }}" #_{{ test_instance }}"
-            upn: '{{ test_ad_user }}@{{ test_domain_name }}'
-            description: '{{ test_ad_user }} Domain Account'
-            password: '{{ test_domain_password }}'
-            update_password: on_create
-            firstname: "ansible test {{ test_instance }}"
-            surname: test
-            domain_server: "{{ test_ad_pdc }}"
-            email: dont_ask@dont_respond.never.com
-            account_locked: false
-            city: springfield
-            company: evil_inc
-            attributes:
-              telephoneNumber: 555-123456
-            state: present
-          register: win_domain_user_result
-          with_items: "{{ range(test_ad_max_users) | list }}"
-          loop_control:
-            loop_var: test_instance
-
-        - debug:
-            var: win_domain_user_result
-
-        - name: delete without role
-          win_domain_user:
-            name: "{{ test_ad_user }}"
-            domain_server: "{{ test_ad_pdc }}"
-            state: absent
-          with_items: "{{ range(test_ad_max_users) | list }}"
-          loop_control:
-            loop_var: test_instance
-
       tags: win_domain_users::previous
 
     - name: create test users
@@ -107,12 +54,12 @@
           company: evil_inc
 
         win_domain_users:
-          - name: "{{ test_ad_user }}-a-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-a-{{ test_instance }}@{{ test_domain_name }}'
-            description: '{{ test_ad_user }} Domain Account'
+          - name: "{{ test_ad_user }}-a"
+            upn: '{{ test_ad_user }}-a@{{ test_domain_name }}'
+            description: "Test user {{ test_ad_user }}-a please erase me."
             password: '{{ test_domain_password }}'
             update_password: on_create
-            firstname: "ansible test {{ test_instance }}"
+            firstname: "ansible test A"
             surname: test
             domain_server: "{{ test_ad_pdc }}"
             email: dont_ask@dont_respond.never.com
@@ -120,31 +67,30 @@
             attributes:
               telephoneNumber: 555-123456
             state: present
-          - name: "{{ test_ad_user }}-b-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-b-{{ test_instance }}@{{ test_domain_name }}'
+          - name: "{{ test_ad_user }}-b"
+            upn: '{{ test_ad_user }}-b@{{ test_domain_name }}'
+            description: "Test user {{ test_ad_user }}-b please erase me."
             path: "{{ test_ad_ou }}"
-            password: "Insecure.Password_{{ test_instance }}"
+            password: "Insecure.Password_b"
             update_password: on_create
             domain_server: "{{ test_ad_pdc }}"
             state: present
-          - name: "{{ test_ad_user }}-c-{{ test_instance }}"
-            upn: '{{ test_ad_user }}-c-{{ test_instance }}@{{ test_domain_name }}'
+          - name: "{{ test_ad_user }}-c"
+            upn: '{{ test_ad_user }}-c@{{ test_domain_name }}'
             path: "{{ test_ad_ou }}"
-            password: "Insecure.Password_{{ test_instance }}"
+            password: "Insecure.Password_c"
             update_password: on_create
             domain_server: "{{ test_ad_pdc }}"
             state: present
-
             account_locked: no
             attributes:
               telephoneNumber: 555-123456
               EmployeeID: 15123456
               # extensionAttribute1: p_func
-
             city: Teruel
             company: Acme
             country: ES
-            description: "Test user {{ test_ad_user }}-c-{{ test_instance }} please erase me."
+            description: "Test user {{ test_ad_user }}-c please erase me."
             domain_password: "{{ test_domain_password }}"
             domain_username: "{{ test_domain_username }}"
             email: dont_ask@dont_respond.never.com
@@ -161,25 +107,21 @@
             surname: Doe
             user_cannot_change_password: false
 
-      with_items: "{{ range(1, test_ad_max_users + 1)|list }}"
-      loop_control:
-        loop_var: test_instance
-
       tags: win_domain_users::create
+
+    - debug:
+        var: win_domain_user_result
 
     - name: cleanup test users
       include_role:
         name: amtega.win_domain_users
       vars:
         win_domain_users:
-          - name: "{{ test_ad_user }}-a-{{ test_instance }}"
+          - name: "{{ test_ad_user }}-a"
             state: absent
-          - name: "{{ test_ad_user }}-b-{{ test_instance }}"
+          - name: "{{ test_ad_user }}-b"
             state: absent
-          - name: "{{ test_ad_user }}-c-{{ test_instance }}"
+          - name: "{{ test_ad_user }}-c"
             state: absent
-      with_items: "{{ range(1, test_ad_max_users + 1)|list }}"
-      loop_control:
-        loop_var: test_instance
 
       tags: win_domain_users::cleanup
