@@ -41,7 +41,7 @@
   loop_control:
     loop_var: user
     label: "{{ user.name }}"
-  win_domain_user:
+  patched_win_domain_user:
     account_locked: >-
       {{ user.account_locked | default(win_domain_users_defaults.account_locked) | default(omit) }}
     attributes: >-
