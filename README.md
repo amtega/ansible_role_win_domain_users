@@ -10,6 +10,28 @@ This is an [Ansible](http://www.ansible.com) role which manages windows domain u
 
 A list of all the default variables for this role is available in `defaults/main.yml`.
 
+The role setups a fact named `win_domain_users_result` with the following dict structure:
+
+```yaml
+win_domain_users_result:
+  changed: true
+  msg: All items completed
+  results:
+    - _ansible_item_label: <name of first user>
+      _ansible_ignore_errors: ...
+      _ansible_item_result: ...
+      _ansible_no_log: ...
+      _ansible_parsed: ...
+      <win_domain_user result values>
+    - _ansible_item_label: <name of second user>
+      _ansible_ignore_errors: ...
+      _ansible_item_result: ...
+      _ansible_no_log: ...
+      _ansible_parsed: ...
+      <win_domain_user result values>
+    ...
+```
+
 ## Dependencies
 
 None.
@@ -63,25 +85,6 @@ commands:
 
 ```shell
 $ cd amtega.win_domain_users/tests
-$ git clone https://github.com/jborean93/ansible-windows.git
-# Creating windows domain controler and client
-$ cd ansible-windows/vagrant/
-$ vim inventory.yml # Comment the following:
-        # SERVER2008:
-        #   ansible_host: 192.168.56.11
-        #   vagrant_box: jborean93/WindowsServer2008-x64
-        #   opt_domain_join_is_longhorn: yes
-        # SERVER2008R2:
-        #   ansible_host: 192.168.56.12
-        #   vagrant_box: jborean93/WindowsServer2008R2
-        # SERVER2012:
-        #   ansible_host: 192.168.56.13
-        #   vagrant_box: jborean93/WindowsServer2012
-        # SERVER2012R2:
-        #   ansible_host: 192.168.56.14
-        #   vagrant_box: jborean93/WindowsServer2012R2
-$ vagrant up # It takes a while
-$ cd ../..
 $ ansible-playbook main.yml
 ```
 
