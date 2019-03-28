@@ -4,93 +4,93 @@
 - name: Run win_domain_users test
   hosts: "{{ win_domain_users_tests_host }}"
   tasks:
-    - name: Check mandatory test parameters have been set
-      check_mode: no
-      assert:
-        that:
-          "{{ item }} is defined"
-        msg: "Undefined mandatory var {{ item }}"
-      loop:
-        - win_domain_users_tests_domain_name
-        - win_domain_users_tests_ad_ou
-        - win_domain_users_tests_ad_user
-        - win_domain_users_tests_ad_password
-
-    - name: Ensure win_domain_user is working
-      block:
-        - name: Ensure the RSAT-AD-PowerShell feature is installed
-          win_feature:
-            name:
-              - RSAT-AD-PowerShell
-            state: present
-          register: ad_feature_result
-          failed_when: false # HACK Fails in windows 10
-
-        - name: Reboot host if required
-          win_reboot:
-          when: >-
-            ad_feature_result | default(False) is changed
-            and ad_feature_result.reboot_required | default(False)
-
-        - name: Win ping
-          win_ping:
-
-    - name: Create test users
-      include_role:
-        name: amtega.win_domain_users
-      vars:
-        win_domain_users_defaults:
-          city: springfield
-          company: evil_inc
-
-        win_domain_users:
-          - name: "{{ win_domain_users_tests_ad_user }}-a"
-            upn: '{{ win_domain_users_tests_ad_user }}-a@{{ win_domain_users_tests_domain_name }}'
-            description: "Test user {{ win_domain_users_tests_ad_user }}-a please erase me."
-            password: "{{ win_domain_users_tests_ad_password }}_a"
-            update_password: on_create
-            firstname: "ansible test A"
-            surname: test
-            email: dont_ask@dont_respond.never.com
-            account_locked: false
-            attributes:
-              telephoneNumber: 555-123456
-            state: present
-          - name: "{{ win_domain_users_tests_ad_user }}-b"
-            upn: '{{ win_domain_users_tests_ad_user }}-b@{{ win_domain_users_tests_domain_name }}'
-            description: "Test user {{ win_domain_users_tests_ad_user }}-b please erase me."
-            path: "{{ win_domain_users_tests_ad_ou }}"
-            password: "{{ win_domain_users_tests_ad_password }}_b"
-            update_password: on_create
-            state: present
-          - name: "{{ win_domain_users_tests_ad_user }}-c"
-            upn: '{{ win_domain_users_tests_ad_user }}-c@{{ win_domain_users_tests_domain_name }}'
-            path: "{{ win_domain_users_tests_ad_ou }}"
-            password: "{{ win_domain_users_tests_ad_password }}_c"
-            update_password: on_create
-            state: present
-            account_locked: no
-            attributes:
-              telephoneNumber: 555-123456
-              EmployeeID: 15123456
-              # extensionAttribute1: p_func
-            city: Teruel
-            company: Acme
-            country: ES
-            description: "Test user {{ win_domain_users_tests_ad_user }}-c please erase me."
-            email: dont_ask@dont_respond.never.com
-            enabled: true
-            firstname: Jane
-            groups:
-              - Domain Users
-            groups_action: add
-            # password_expired: no
-            password_never_expires: false
-            postal_code: 12345
-            state_province: TE
-            street: 13 Elm
-            surname: Doe
-            user_cannot_change_password: false
+    # - name: Check mandatory test parameters have been set
+    #   check_mode: no
+    #   assert:
+    #     that:
+    #       "{{ item }} is defined"
+    #     msg: "Undefined mandatory var {{ item }}"
+    #   loop:
+    #     - win_domain_users_tests_domain_name
+    #     - win_domain_users_tests_ad_ou
+    #     - win_domain_users_tests_ad_user
+    #     - win_domain_users_tests_ad_password
+    #
+    # - name: Ensure win_domain_user is working
+    #   block:
+    #     - name: Ensure the RSAT-AD-PowerShell feature is installed
+    #       win_feature:
+    #         name:
+    #           - RSAT-AD-PowerShell
+    #         state: present
+    #       register: ad_feature_result
+    #       failed_when: false # HACK Fails in windows 10
+    #
+    #     - name: Reboot host if required
+    #       win_reboot:
+    #       when: >-
+    #         ad_feature_result | default(False) is changed
+    #         and ad_feature_result.reboot_required | default(False)
+    #
+    #     - name: Win ping
+    #       win_ping:
+    #
+    # - name: Create test users
+    #   include_role:
+    #     name: amtega.win_domain_users
+    #   vars:
+    #     win_domain_users_defaults:
+    #       city: springfield
+    #       company: evil_inc
+    #
+    #     win_domain_users:
+    #       - name: "{{ win_domain_users_tests_ad_user }}-a"
+    #         upn: '{{ win_domain_users_tests_ad_user }}-a@{{ win_domain_users_tests_domain_name }}'
+    #         description: "Test user {{ win_domain_users_tests_ad_user }}-a please erase me."
+    #         password: "{{ win_domain_users_tests_ad_password }}_a"
+    #         update_password: on_create
+    #         firstname: "ansible test A"
+    #         surname: test
+    #         email: dont_ask@dont_respond.never.com
+    #         account_locked: false
+    #         attributes:
+    #           telephoneNumber: 555-123456
+    #         state: present
+    #       - name: "{{ win_domain_users_tests_ad_user }}-b"
+    #         upn: '{{ win_domain_users_tests_ad_user }}-b@{{ win_domain_users_tests_domain_name }}'
+    #         description: "Test user {{ win_domain_users_tests_ad_user }}-b please erase me."
+    #         path: "{{ win_domain_users_tests_ad_ou }}"
+    #         password: "{{ win_domain_users_tests_ad_password }}_b"
+    #         update_password: on_create
+    #         state: present
+    #       - name: "{{ win_domain_users_tests_ad_user }}-c"
+    #         upn: '{{ win_domain_users_tests_ad_user }}-c@{{ win_domain_users_tests_domain_name }}'
+    #         path: "{{ win_domain_users_tests_ad_ou }}"
+    #         password: "{{ win_domain_users_tests_ad_password }}_c"
+    #         update_password: on_create
+    #         state: present
+    #         account_locked: no
+    #         attributes:
+    #           telephoneNumber: 555-123456
+    #           EmployeeID: 15123456
+    #           # extensionAttribute1: p_func
+    #         city: Teruel
+    #         company: Acme
+    #         country: ES
+    #         description: "Test user {{ win_domain_users_tests_ad_user }}-c please erase me."
+    #         email: dont_ask@dont_respond.never.com
+    #         enabled: true
+    #         firstname: Jane
+    #         groups:
+    #           - Domain Users
+    #         groups_action: add
+    #         # password_expired: no
+    #         password_never_expires: false
+    #         postal_code: 12345
+    #         state_province: TE
+    #         street: 13 Elm
+    #         surname: Doe
+    #         user_cannot_change_password: false
 
     - name: Cleanup test users
       include_role:
