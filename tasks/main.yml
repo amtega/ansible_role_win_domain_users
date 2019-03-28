@@ -1,7 +1,7 @@
 ---
 # Role tasks
 
-- name: check availability of cmdlets
+- name: Check availability of cmdlets
   win_shell: |
     if (
         (Get-Command -Name New-ADUser -ErrorAction SilentlyContinue) `
@@ -27,74 +27,133 @@
         $false
     }
   register: win_domain_users_cmdlets_check
+  changed_when: no
   tags:
     - role::win_domain_users
     - role::win_domain_users::check
 
-- name: assert availability of cmdlets
+- name: Assert availability of cmdlets
   assert:
     that:
       - (win_domain_users_cmdlets_check.stdout | trim | bool)
 
-- name: setup windows users
-  loop: "{{ win_domain_users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user.name }}"
+- name: Setup windows users
   patched_win_domain_user:
     account_locked: >-
-      {{ user.account_locked | default(win_domain_users_defaults.account_locked) | default(omit) }}
+      {{ win_domain_users_item.account_locked
+         | default(win_domain_users_defaults.account_locked)
+         | default(omit) }}
     attributes: >-
-      {{ user.attributes | default(win_domain_users_defaults.attributes) | default(omit) }}
-    city: "{{ user.city | default(win_domain_users_defaults.city) | default(omit) }}"
+      {{ win_domain_users_item.attributes
+         | default(win_domain_users_defaults.attributes)
+         | default(omit) }}
+    city: >-
+      {{ win_domain_users_item.city | default(win_domain_users_defaults.city) | default(omit) }}
     company: >-
-      {{ user.company | default(win_domain_users_defaults.company) | default(omit) }}
+      {{ win_domain_users_item.company
+         | default(win_domain_users_defaults.company)
+         | default(omit) }}
     country: >-
-      {{ user.country | default(win_domain_users_defaults.country) | default(omit) }}
+      {{ win_domain_users_item.country
+         | default(win_domain_users_defaults.country)
+         | default(omit) }}
     description: >-
-      {{ user.description | default(win_domain_users_defaults.description) | default(omit) }}
+      {{ win_domain_users_item.description
+         | default(win_domain_users_defaults.description)
+         | default(omit) }}
     domain_password: >-
-      {{ user.domain_password | default(win_domain_users_defaults.domain_password) | default(omit) }}
+      {{ win_domain_users_item.domain_password
+         | default(win_domain_users_defaults.domain_password)
+         | default(omit) }}
     domain_server: >-
-      {{ user.domain_server | default(win_domain_users_defaults.domain_server) | default(omit) }}
+      {{ win_domain_users_item.domain_server
+         | default(win_domain_users_defaults.domain_server)
+         | default(omit) }}
     domain_username: >-
-      {{ user.domain_username | default(win_domain_users_defaults.domain_username) | default(omit) }}
+      {{ win_domain_users_item.domain_username
+         | default(win_domain_users_defaults.domain_username)
+         | default(omit) }}
     email: >-
-      {{ user.email | default(win_domain_users_defaults.email) | default(omit) }}
+      {{ win_domain_users_item.email
+         | default(win_domain_users_defaults.email)
+         | default(omit) }}
     enabled: >-
-      {{ user.enabled | default(win_domain_users_defaults.enabled) | default(omit) }}
+      {{ win_domain_users_item.enabled
+         | default(win_domain_users_defaults.enabled)
+         | default(omit) }}
     firstname: >-
-      {{ user.firstname | default(win_domain_users_defaults.firstname) | default(omit) }}
+      {{ win_domain_users_item.firstname
+         | default(win_domain_users_defaults.firstname)
+         | default(omit) }}
     groups: >-
-      {{ user.groups | default(win_domain_users_defaults.groups) | default(omit) }}
+      {{ win_domain_users_item.groups
+         | default(win_domain_users_defaults.groups)
+         | default(omit) }}
     groups_action: >-
-      {{ user.groups_action | default(win_domain_users_defaults.groups_action) | default(omit) }}
+      {{ win_domain_users_item.groups_action
+         | default(win_domain_users_defaults.groups_action)
+         | default(omit) }}
     name: >-
-      {{ user.name | default(win_domain_users_defaults.name) | default(omit) }}
+      {{ win_domain_users_item.name
+         | default(win_domain_users_defaults.name)
+         | default(omit) }}
     password: >-
-      {{ user.password | default(win_domain_users_defaults.password) | default(omit) }}
+      {{ win_domain_users_item.password | default(win_domain_users_defaults.password)
+      | default(omit) }}
     password_expired: >-
-      {{ user.password_expired | default(win_domain_users_defaults.password_expired) | default(omit) }}
+      {{ win_domain_users_item.password_expired
+         | default(win_domain_users_defaults.password_expired)
+         | default(omit) }}
     password_never_expires: >-
-      {{ user.password_never_expires | default(win_domain_users_defaults.password_never_expires) | default(omit) }}
+      {{ win_domain_users_item.password_never_expires
+         | default(win_domain_users_defaults.password_never_expires)
+         | default(omit) }}
     path: >-
-      {{ user.path | default(win_domain_users_defaults.path) | default(omit) }}
+      {{ win_domain_users_item.path
+         | default(win_domain_users_defaults.path)
+         | default(omit) }}
     postal_code: >-
-      {{ user.postal_code | default(win_domain_users_defaults.postal_code) | default(omit) }}
+      {{ win_domain_users_item.postal_code
+         | default(win_domain_users_defaults.postal_code)
+         | default(omit) }}
     state: >-
-      {{ user.state | default(win_domain_users_defaults.state) | default(omit) }}
+      {{ win_domain_users_item.state
+         | default(win_domain_users_defaults.state)
+         | default(omit) }}
     state_province: >-
-      {{ user.state_province | default(win_domain_users_defaults.state_province) | default(omit) }}
+      {{ win_domain_users_item.state_province
+         | default(win_domain_users_defaults.state_province)
+         | default(omit) }}
     street: >-
-      {{ user.street | default(win_domain_users_defaults.street) | default(omit) }}
+      {{ win_domain_users_item.street
+         | default(win_domain_users_defaults.street)
+         | default(omit) }}
     surname: >-
-      {{ user.surname | default(win_domain_users_defaults.surname) | default(omit) }}
+      {{ win_domain_users_item.surname
+         | default(win_domain_users_defaults.surname)
+         | default(omit) }}
     update_password: >-
-      {{ user.update_password | default(win_domain_users_defaults.update_password) | default(omit) }}
+      {{ win_domain_users_item.update_password
+         | default(win_domain_users_defaults.update_password)
+         | default(omit) }}
     upn: >-
-      {{ user.upn | default(win_domain_users_defaults.upn) | default(omit) }}
+      {{ win_domain_users_item.upn
+         | default(win_domain_users_defaults.upn)
+         | default(omit) }}
     user_cannot_change_password: >-
-      {{ user.user_cannot_change_password | default(win_domain_users_defaults.user_cannot_change_password) | default(omit) }}
-  register: win_domain_users_result
+      {{ win_domain_users_item.user_cannot_change_password
+         | default(win_domain_users_defaults.user_cannot_change_password)
+         | default(omit) }}
+  loop: "{{ win_domain_users_to_manage }}"
+  loop_control:
+    loop_var: win_domain_users_item
+    label: "{{ win_domain_users_item.name }}"
+  vars:
+    win_domain_users_to_manage: >-
+      {{ win_domain_users
+         + ((win_domain_users_load_from_hostvars)
+            | ternary(win_domain_users_hostvars
+                      | default([])
+                      | flatten, [])) }}
   tags:
     - role::win_domain_users
