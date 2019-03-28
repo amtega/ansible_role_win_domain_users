@@ -2,7 +2,7 @@
 # Tasks for testing role
 
 - name: Run win_domain_users test
-  hosts: "{{ win_domain_groups_tests_host }}"
+  hosts: "{{ win_domain_users_tests_host }}"
   tasks:
     - name: Check mandatory test parameters have been set
       check_mode: no
