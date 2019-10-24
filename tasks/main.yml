@@ -28,6 +28,7 @@
     }
   register: win_domain_users_cmdlets_check
   changed_when: no
+  no_log: "{{ win_domain_users_no_log }}"
   tags:
     - role::win_domain_users
     - role::win_domain_users::check
@@ -36,6 +37,7 @@
   assert:
     that:
       - (win_domain_users_cmdlets_check.stdout | trim | bool)
+  no_log: "{{ win_domain_users_no_log }}"
 
 - name: Setup windows users
   patched_win_domain_user:
@@ -148,6 +150,7 @@
   loop_control:
     loop_var: win_domain_users_item
     label: "{{ win_domain_users_item.name }}"
+  no_log: "{{ win_domain_users_no_log }}"
   vars:
     win_domain_users_to_manage: >-
       {{ win_domain_users
