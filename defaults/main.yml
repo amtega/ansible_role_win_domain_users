@@ -50,3 +50,7 @@ win_domain_users_defaults: {}
 # follow the structure detailed before for `win_domain_groups`
 
 win_domain_users_load_from_hostvars: no
+
+# Hide sensitive information
+
+win_domain_users_no_log: yes
