@@ -99,6 +99,10 @@
       {{ win_domain_users_item.name
          | default(win_domain_users_defaults.name)
          | default(omit) }}
+    identity: >-
+      {{ win_domain_users_item.identity
+         | default(win_domain_users_defaults.identity)
+         | default(omit) }}
     password: >-
       {{ win_domain_users_item.password | default(win_domain_users_defaults.password)
       | default(omit) }}
