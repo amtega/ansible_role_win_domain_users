@@ -22,6 +22,7 @@
 #     groups:
 #       - Domain Admins
 #     groups_action: add
+#     identity: alice
 #     name: alice
 #     password: 41c3P4ssw0rd
 #     password_expired: false
