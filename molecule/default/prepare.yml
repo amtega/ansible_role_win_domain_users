@@ -14,6 +14,9 @@
         include_sub_features: yes
         state: present
       register: ad_install_result
+      until: ad_install_result is not failed
+      retries: 3
+      delay: 20
 
     - name: Ensure the RSAT-AD-PowerShell feature is installed
       win_feature:
@@ -27,6 +30,9 @@
         dns_domain_name: '{{ win_domain_users_tests_domain_name }}'
         safe_mode_password: '{{ win_domain_users_tests_safe_mode_password }}'
       register: domain_install_result
+      until: domain_install_result is not failed
+      retries: 3
+      delay: 20
 
     - name: reboot server
       win_reboot:
@@ -45,6 +51,10 @@
         New-ADOrganizationalUnit
         -Name "{{ win_domain_users_tests_ad_ou_name }}"
         -Path "{{ win_domain_users_tests_ad_ou_base }}"
+      register: ou_creation_result
+      until: ou_creation_result is not failed
+      retries: 3
+      delay: 20
 
     - name: Populate test users
       include_role:
