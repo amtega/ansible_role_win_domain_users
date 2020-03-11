@@ -59,3 +59,36 @@
             street: 13 Elm
             surname: Doe
             user_cannot_change_password: false
+          - name: "{{ win_domain_users_tests_ad_user }}-d"
+            state: absent
+          - name: "{{ win_domain_users_tests_ad_user }}-e"
+            upn: '{{ win_domain_users_tests_ad_user }}-e@{{ win_domain_users_tests_domain_name }}'
+            description: "Test user {{ win_domain_users_tests_ad_user }}-e please erase me."
+            path: "{{ win_domain_users_tests_ad_ou }}"
+            password: "{{ win_domain_users_tests_ad_password }}_e"
+            update_password: on_create
+            state: present
+            overwrite: yes
+
+    - name: 'Overwrite users:no'
+      tags:
+        - molecule-idempotence-notest
+        # Is idempotent, but reports changes not applied (with `check: yes`)
+      include_role:
+        name: amtega.win_domain_users
+      vars:
+        win_domain_users:
+          - name: "{{ win_domain_users_tests_ad_user }}-f"
+            upn: '{{ win_domain_users_tests_ad_user }}-f@{{ win_domain_users_tests_domain_name }}'
+            description: "Test user {{ win_domain_users_tests_ad_user }}-f please erase me."
+            path: "{{ win_domain_users_tests_ad_ou }}"
+            password: "{{ win_domain_users_tests_ad_password }}_f"
+            state: present
+            overwrite: no
+          - name: "{{ win_domain_users_tests_ad_user }}-g"
+            upn: '{{ win_domain_users_tests_ad_user }}-g@{{ win_domain_users_tests_domain_name }}'
+            description: "Test user {{ win_domain_users_tests_ad_user }}-g please erase me."
+            path: "{{ win_domain_users_tests_ad_ou }}"
+            password: "{{ win_domain_users_tests_ad_password }}_g"
+            state: present
+            overwrite: no
