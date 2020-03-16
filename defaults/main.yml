@@ -5,6 +5,9 @@
 # that the ones expected by the ansible win_domain_user module.
 # https://docs.ansible.com/ansible/latest/modules/win_domain_user_module.html
 #
+# Aditionally you can pass the parameter "overwrite" (boolean) to avoid
+# overwriting an existing user.
+#
 # Example:
 #
 # win_domain_users:
@@ -24,6 +27,7 @@
 #     groups_action: add
 #     identity: alice
 #     name: alice
+#     overwrite: no
 #     password: 41c3P4ssw0rd
 #     password_expired: false
 #     password_never_expires: false

@@ -1,4 +1,6 @@
 ---
+# Role tasks
+
 - name: Check availability of cmdlets
   win_shell: |
     if (
@@ -48,7 +50,8 @@
          | default(win_domain_users_defaults.attributes)
          | default(omit) }}
     city: >-
-      {{ win_domain_users_item.city | default(win_domain_users_defaults.city) | default(omit) }}
+      {{ win_domain_users_item.city
+         | default(win_domain_users_defaults.city) | default(omit) }}
     company: >-
       {{ win_domain_users_item.company
          | default(win_domain_users_defaults.company)
@@ -102,8 +105,9 @@
          | default(win_domain_users_defaults.identity)
          | default(omit) }}
     password: >-
-      {{ win_domain_users_item.password | default(win_domain_users_defaults.password)
-      | default(omit) }}
+      {{ win_domain_users_item.password
+         | default(win_domain_users_defaults.password)
+         | default(omit) }}
     password_expired: >-
       {{ win_domain_users_item.password_expired
          | default(win_domain_users_defaults.password_expired)
@@ -168,8 +172,6 @@
   register: get_domain_users_result
   tags:
     - role::win_domain_users
-- debug:
-    var: get_domain_users_result
 
 - name: Setup windows users
   patched_win_domain_user:
@@ -182,7 +184,9 @@
          | default(win_domain_users_defaults.attributes)
          | default(omit) }}
     city: >-
-      {{ win_domain_users_item.city | default(win_domain_users_defaults.city) | default(omit) }}
+      {{ win_domain_users_item.city
+         | default(win_domain_users_defaults.city)
+         | default(omit) }}
     company: >-
       {{ win_domain_users_item.company
          | default(win_domain_users_defaults.company)
@@ -236,8 +240,9 @@
          | default(win_domain_users_defaults.identity)
          | default(omit) }}
     password: >-
-      {{ win_domain_users_item.password | default(win_domain_users_defaults.password)
-      | default(omit) }}
+      {{ win_domain_users_item.password
+         | default(win_domain_users_defaults.password)
+         | default(omit) }}
     password_expired: >-
       {{ win_domain_users_item.password_expired
          | default(win_domain_users_defaults.password_expired)
