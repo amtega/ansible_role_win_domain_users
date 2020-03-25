@@ -87,9 +87,6 @@
             overwrite: yes
 
     - name: 'Overwrite users:no'
-      tags:
-        - molecule-idempotence-notest
-        # Is idempotent, but reports changes not applied (with `check: yes`)
       include_role:
         name: amtega.win_domain_users
       vars:
