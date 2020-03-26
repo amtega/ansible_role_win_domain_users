@@ -172,9 +172,16 @@
                           | default([])
                           | flatten, [])) }}
       check_mode: yes
+      # HACK: Mask changed state in a recovered failure
+      failed_when: yes
       register: get_domain_users_result
       tags:
         - role::win_domain_users
+
+  rescue:
+
+      - debug:
+          msg: "Mask changed state in a recovered failure. HACK ⚗"
 
 - name: Setup windows users
   patched_win_domain_user:
