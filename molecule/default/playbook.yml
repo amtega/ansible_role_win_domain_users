@@ -3,6 +3,7 @@
 - name: Converge
   hosts: all
   tasks:
+
     - name: Create test users
       include_role:
         name: amtega.win_domain_users
@@ -113,3 +114,129 @@
             password: "{{ win_domain_users_tests_ad_password }}_g"
             state: present
             overwrite: no
+    
+    - name: Check users - get data
+      win_shell: >-
+        Get-ADUser
+        -Identity {{ user }}
+        -Properties Description, GivenName, Surname,
+        EmailAddress, LockedOut, SamAccountName,
+        UserPrincipalName, City, Company
+        | ConvertTo-Json
+      loop:
+        - "{{ win_domain_users_tests_ad_user }}-a"
+        - "{{ win_domain_users_tests_ad_user }}-b"
+        - "{{ win_domain_users_tests_ad_user }}-c"
+        - "{{ win_domain_users_tests_ad_user }}-e"
+        - "{{ win_domain_users_tests_ad_user }}-f"
+        - "{{ win_domain_users_tests_ad_user }}-g"
+      loop_control:
+        loop_var: user
+      changed_when: no
+      ignore_errors: yes
+      register: users_result
+
+    - name: Check users - assert
+      vars:
+        result:  >-
+          {{ users_result.results
+          | map(attribute='stdout')
+          | map('from_json')
+          | list }}
+        desired:
+          ansible_test_user-a:
+            City: "springfield"
+            Company: "evil_inc"
+            Description: "Test user ansible_test_user-a please erase me."
+            DistinguishedName: "CN=ansible_test_user-a,CN=Users,DC=test,DC=local"
+            EmailAddress: "dont_ask@dont_respond.never.com"
+            Enabled: true
+            GivenName: "ansible test A"
+            LockedOut: false
+            Name: "ansible_test_user-a"
+            SamAccountName: "ansible_test_user-a"
+            Surname: "test"
+            UserPrincipalName: "ansible_test_user-a@test.local"
+          ansible_test_user-b:
+            City: "springfield"
+            Company: "evil_inc"
+            Description: "Test user ansible_test_user-b please erase me."
+            DistinguishedName: "CN=ansible_test_user-b,OU=Test,DC=test,DC=local"
+            EmailAddress:
+            Enabled: true
+            GivenName:
+            LockedOut: false
+            Name: "ansible_test_user-b"
+            SamAccountName: "ansible_test_user-b"
+            Surname:
+            UserPrincipalName: "ansible_test_user-b@test.local"
+          ansible_test_user-c:
+            City: Teruel
+            Company: Acme
+            Description: "Test user ansible_test_user-c please erase me."
+            DistinguishedName: "CN=ansible_test_user-c,OU=Test,DC=test,DC=local"
+            EmailAddress: "dont_ask@dont_respond.never.com"
+            Enabled: true
+            GivenName: "Jane"
+            LockedOut: false
+            Name: "ansible_test_user-c"
+            SamAccountName: "ansible_test_user-c"
+            Surname: "Doe"
+            UserPrincipalName: "ansible_test_user-c@test.local"
+          ansible_test_user-e:
+            City: "springfield"
+            Company: "evil_inc"
+            Description: "Test user ansible_test_user-e please erase me."
+            DistinguishedName: "CN=ansible_test_user-e,OU=Test,DC=test,DC=local"
+            EmailAddress:
+            Enabled: true
+            GivenName:
+            LockedOut: false
+            Name: "ansible_test_user-e"
+            SamAccountName: "ansible_test_user-e"
+            Surname:
+            UserPrincipalName: "ansible_test_user-e@test.local"
+          ansible_test_user-f:
+            City:
+            Company:
+            Description: "Test user ansible_test_user-f please erase me."
+            DistinguishedName: "CN=ansible_test_user-f,OU=Test,DC=test,DC=local"
+            EmailAddress:
+            Enabled: true
+            GivenName:
+            LockedOut: false
+            Name: "ansible_test_user-f"
+            SamAccountName: "ansible_test_user-f"
+            Surname:
+            UserPrincipalName: "ansible_test_user-f@test.local"
+          ansible_test_user-g:
+            City:
+            Company:
+            Description: "Test user ansible_test_user-g please erase me."
+            DistinguishedName: "CN=ansible_test_user-g,OU=Test,DC=test,DC=local"
+            EmailAddress:
+            Enabled: true
+            GivenName:
+            LockedOut: false
+            Name: "ansible_test_user-g"
+            SamAccountName: "ansible_test_user-g"
+            Surname:
+            UserPrincipalName: "ansible_test_user-g@test.local"
+
+      block:
+
+        - assert:
+            that:
+              - user.Description == desired[user.SamAccountName].Description
+              - user.GivenName == desired[user.SamAccountName].GivenName
+              - user.Surname == desired[user.SamAccountName].Surname
+              - user.EmailAddress == desired[user.SamAccountName].EmailAddress
+              - user.LockedOut == desired[user.SamAccountName].LockedOut
+              - user.SamAccountName == desired[user.SamAccountName].SamAccountName
+              - user.UserPrincipalName == desired[user.SamAccountName].UserPrincipalName
+              - user.City == desired[user.SamAccountName].City
+              - user.Company == desired[user.SamAccountName].Company
+          loop: "{{ result }}"
+          loop_control:
+            loop_var: user
+            label: "{{ user.SamAccountName }}"
