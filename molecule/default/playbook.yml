@@ -114,7 +114,7 @@
             password: "{{ win_domain_users_tests_ad_password }}_g"
             state: present
             overwrite: no
-    
+
     - name: Check users - get data
       win_shell: >-
         Get-ADUser
@@ -225,7 +225,8 @@
 
       block:
 
-        - assert:
+        - name: Check users - get data
+          assert:
             that:
               - user.Description == desired[user.SamAccountName].Description
               - user.GivenName == desired[user.SamAccountName].GivenName
