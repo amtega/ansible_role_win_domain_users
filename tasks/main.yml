@@ -42,7 +42,9 @@
 - name: Block. Find out what users would be overwritten
   block:
 
-    - name: Find out what users would be overwritten
+    - name: >-
+        Find out what users would be overwritten.
+        (Intentional error, ignore it)⚠
       patched_win_domain_user:
         account_locked: >-
           {{ win_domain_users_item.account_locked
@@ -181,7 +183,9 @@
   rescue:
 
       - debug:
-          msg: "Mask changed state in a recovered failure. HACK ⚗"
+          msg: >-
+            Mask changed state in a recovered failure.
+            Last erro is intentional, ignore it. ⚠
 
 - name: Setup windows users
   patched_win_domain_user:
