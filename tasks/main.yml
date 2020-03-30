@@ -50,30 +50,30 @@
     domain_password: >-
       {{ win_domain_users_item.domain_password
          | default(win_domain_users_defaults.domain_password)
-         | default(omit) }}
+         | default("") }}
     domain_server: >-
       {{ win_domain_users_item.domain_server
          | default(win_domain_users_defaults.domain_server)
-         | default(omit) }}
+         | default("") }}
     domain_username: >-
       {{ win_domain_users_item.domain_username
          | default(win_domain_users_defaults.domain_username)
-         | default(omit) }}
+         | default("") }}
     name: >-
       {{ win_domain_users_item.name
          | default(win_domain_users_defaults.name)
-         | default(omit) }}
+         | default("") }}
     identity: >-
       {{ win_domain_users_item.identity
          | default(win_domain_users_defaults.identity)
-         | default(omit) }}
+         | default(name) }}
   win_shell: |-
     # Parameters
     $domain_password="{{ domain_password }}"
     $domain_server="{{ domain_server }}"
     $domain_username="{{ domain_username }}"
     $name="{{ name }}"
-    $identity="{{ identity | default(name) }}"
+    $identity="{{ identity }}"
 
     # External domain server
     $extra_args = @{}
@@ -101,7 +101,7 @@
     }
     If ($user_obj) { "present" } Else { "absent" }
   when: >-
-    (not win_domain_users_item.overwrite | default(True))
+    (not win_domain_users_item.overwrite | default(False))
     and (win_domain_users_item.state | default('present')) == 'present'
   loop: "{{ win_domain_users_to_manage }}"
   loop_control:
@@ -227,18 +227,6 @@
       {{ win_domain_users_item.user_cannot_change_password
          | default(win_domain_users_defaults.user_cannot_change_password)
          | default(omit) }}
-  # noqa 503
-  when: >-
-    ((win_domain_users_item.state | default('present')) == 'absent')
-    | ternary(True,
-      (win_domain_users_item.overwrite | default(True))
-      or not "present" in get_domain_users_result.results[win_domain_users_index].stdout)
-  loop: "{{ win_domain_users_to_manage }}"
-  loop_control:
-    loop_var: win_domain_users_item
-    index_var: win_domain_users_index
-    label: "{{ win_domain_users_item.name }}"
-  no_log: "{{ win_domain_users_no_log }}"
   vars:
     win_domain_users_to_manage: >-
       {{ win_domain_users
@@ -246,5 +234,21 @@
             | ternary(win_domain_users_hostvars
                       | default([])
                       | flatten, [])) }}
+    overwrite_user: "{{ win_domain_users_item.overwrite | default(False) }}"
+    user_should_be_absent: >-
+      {{ (win_domain_users_item.state | default('present')) == 'absent' }}
+    user_is_present: >-
+      {{ "present" in
+      (get_domain_users_result.results[win_domain_users_index].stdout
+      | default("absent")) }}
+  when: >-
+    user_should_be_absent | ternary(True, overwrite_user or not user_is_present)
+  loop: "{{ win_domain_users_to_manage }}"
+  loop_control:
+    loop_var: win_domain_users_item
+    index_var: win_domain_users_index
+    label: >-
+      {{ win_domain_users_item.name }}
+  no_log: "{{ win_domain_users_no_log }}"
   tags:
     - role::win_domain_users
