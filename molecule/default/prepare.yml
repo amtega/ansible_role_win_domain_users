@@ -15,7 +15,7 @@
       register: ad_install_result
       until: ad_install_result is not failed
       retries: 30
-      delay: 15
+      delay: 60
 
     - name: Ensure the RSAT-AD-PowerShell feature is installed
       win_feature:
@@ -47,19 +47,33 @@
     - name: Win ping
       win_ping:
 
-    # TODO: win_wait_for_process: Search for the process needed
-    #       for New-ADOrganizationalUnit
+    - name: Check Active Directoy Web Services
+      win_shell: |-
+        $test = Try { Get-AdDomain } Catch { $null }
+        If ($test) { "OK" } else { "Failed" }
+      register: check_adws_result
+      failed_when: "'Failed' in check_adws_result.stdout"
+      until: "'OK' in check_adws_result.stdout"
+      retries: 30
+      delay: 60
+
     - name: Create OU
-      win_shell: >
+      win_shell: |-
         $ou = Try {
-        Get-ADOrganizationalUnit
-        -Identity "{{ win_domain_users_tests_ad_ou }}" }
-        Catch { $null }
+          Get-ADOrganizationalUnit `
+            -Identity "{{ win_domain_users_tests_ad_ou }}"
+        } Catch { $null }
         If (-Not $ou) {
-        New-ADOrganizationalUnit
-        -Name "{{ win_domain_users_tests_ad_ou_name }}"
-        -Path "{{ win_domain_users_tests_ad_ou_base }}" }
+          New-ADOrganizationalUnit `
+            -Name "{{ win_domain_users_tests_ad_ou_name }}" `
+            -Path "{{ win_domain_users_tests_ad_ou_base }}"
+          "changed"
+        }
       register: ou_creation_result
+      changed_when: "'changed' in ou_creation_result.stdout"
+      failed_when: >-
+        'Unable to find a default server with Active Directory Web Services
+        running' in ou_creation_result.stdout
       until: ou_creation_result is successful
       retries: 30
       delay: 15
