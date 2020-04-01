@@ -6,7 +6,7 @@
   tasks:
     - wait_for_connection:
 
-    - name: install ad
+    - name: Install AD
       win_feature:
         name: AD-Domain-Services
         include_management_tools: yes
@@ -24,7 +24,7 @@
         state: present
       register: ad_feature_result
 
-    - name: install domain
+    - name: Install domain
       win_domain:
         dns_domain_name: '{{ win_domain_users_tests_domain_name }}'
         safe_mode_password: '{{ win_domain_users_tests_safe_mode_password }}'
@@ -33,7 +33,7 @@
       retries: 30
       delay: 15
 
-    - name: reboot server
+    - name: Reboot server
       win_reboot:
         msg: "Installing AD. Rebooting..."
         pre_reboot_delay: 15
