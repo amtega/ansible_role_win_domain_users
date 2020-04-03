@@ -6,6 +6,7 @@
     - name: Create test users
       include_role:
         name: amtega.win_domain_users
+        allow_duplicates: yes
       vars:
         win_domain_users_defaults:
           city: springfield
@@ -92,6 +93,7 @@
         # Is idempotent, but reports changes not applied (with `check: yes`)
       include_role:
         name: amtega.win_domain_users
+        allow_duplicates: yes
       vars:
         win_domain_users:
           - name: "{{ win_domain_users_tests_ad_user }}-f"
