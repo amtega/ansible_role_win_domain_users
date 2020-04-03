@@ -1,6 +1,28 @@
 ---
 # Role tasks
 
+- name: Check users name lengths
+  assert:
+    that:
+      - (win_domain_users_item.name | default("") | length) <= 15
+    fail_msg: >-
+      users 'name' ({{ win_domain_users_item.name }}) length shuold be <= 15.
+      Use a shorter name in conjunction with 'upn' parameter.
+      Example: {{ win_domain_users_item.name + "@example.local" }}
+  loop: "{{ win_domain_users_to_manage }}"
+  loop_control:
+    loop_var: win_domain_users_item
+    index_var: win_domain_users_index
+    label: "{{ win_domain_users_item.name }}"
+  no_log: "{{ win_domain_users_no_log }}"
+  vars:
+    win_domain_users_to_manage: >-
+      {{ win_domain_users
+         + ((win_domain_users_load_from_hostvars)
+            | ternary(win_domain_users_hostvars
+                      | default([])
+                      | flatten, [])) }}
+
 - name: Check availability of cmdlets
   win_shell: |
     if (
