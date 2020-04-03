@@ -1,28 +1,6 @@
 ---
 # Role tasks
 
-- name: Check users name lengths
-  assert:
-    that:
-      - (win_domain_users_item.name | default("") | length) <= 15
-    fail_msg: >-
-      users 'name' ({{ win_domain_users_item.name }}) length shuold be <= 15.
-      Use a shorter name in conjunction with 'upn' parameter.
-      Example: {{ win_domain_users_item.name + "@example.local" }}
-  loop: "{{ win_domain_users_to_manage }}"
-  loop_control:
-    loop_var: win_domain_users_item
-    index_var: win_domain_users_index
-    label: "{{ win_domain_users_item.name }}"
-  no_log: "{{ win_domain_users_no_log }}"
-  vars:
-    win_domain_users_to_manage: >-
-      {{ win_domain_users
-         + ((win_domain_users_load_from_hostvars)
-            | ternary(win_domain_users_hostvars
-                      | default([])
-                      | flatten, [])) }}
-
 - name: Check availability of cmdlets
   win_shell: |
     if (
@@ -62,127 +40,6 @@
   no_log: "{{ win_domain_users_no_log }}"
 
 - name: Find out what users would be overwritten
-  patched_win_domain_user:
-    account_locked: >-
-      {{ win_domain_users_item.account_locked
-         | default(win_domain_users_defaults.account_locked)
-         | default(omit) }}
-    attributes: >-
-      {{ win_domain_users_item.attributes
-         | default(win_domain_users_defaults.attributes)
-         | default(omit) }}
-    city: >-
-      {{ win_domain_users_item.city
-         | default(win_domain_users_defaults.city) | default(omit) }}
-    company: >-
-      {{ win_domain_users_item.company
-         | default(win_domain_users_defaults.company)
-         | default(omit) }}
-    country: >-
-      {{ win_domain_users_item.country
-         | default(win_domain_users_defaults.country)
-         | default(omit) }}
-    description: >-
-      {{ win_domain_users_item.description
-         | default(win_domain_users_defaults.description)
-         | default(omit) }}
-    domain_password: >-
-      {{ win_domain_users_item.domain_password
-         | default(win_domain_users_defaults.domain_password)
-         | default(omit) }}
-    domain_server: >-
-      {{ win_domain_users_item.domain_server
-         | default(win_domain_users_defaults.domain_server)
-         | default(omit) }}
-    domain_username: >-
-      {{ win_domain_users_item.domain_username
-         | default(win_domain_users_defaults.domain_username)
-         | default(omit) }}
-    email: >-
-      {{ win_domain_users_item.email
-         | default(win_domain_users_defaults.email)
-         | default(omit) }}
-    enabled: >-
-      {{ win_domain_users_item.enabled
-         | default(win_domain_users_defaults.enabled)
-         | default(omit) }}
-    firstname: >-
-      {{ win_domain_users_item.firstname
-         | default(win_domain_users_defaults.firstname)
-         | default(omit) }}
-    groups: >-
-      {{ win_domain_users_item.groups
-         | default(win_domain_users_defaults.groups)
-         | default(omit) }}
-    groups_action: >-
-      {{ win_domain_users_item.groups_action
-         | default(win_domain_users_defaults.groups_action)
-         | default(omit) }}
-    name: >-
-      {{ win_domain_users_item.name
-         | default(win_domain_users_defaults.name)
-         | default(omit) }}
-    identity: >-
-      {{ win_domain_users_item.identity
-         | default(win_domain_users_defaults.identity)
-         | default(omit) }}
-    password: >-
-      {{ win_domain_users_item.password
-         | default(win_domain_users_defaults.password)
-         | default(omit) }}
-    password_expired: >-
-      {{ win_domain_users_item.password_expired
-         | default(win_domain_users_defaults.password_expired)
-         | default(omit) }}
-    password_never_expires: >-
-      {{ win_domain_users_item.password_never_expires
-         | default(win_domain_users_defaults.password_never_expires)
-         | default(omit) }}
-    path: >-
-      {{ win_domain_users_item.path
-         | default(win_domain_users_defaults.path)
-         | default(omit) }}
-    postal_code: >-
-      {{ win_domain_users_item.postal_code
-         | default(win_domain_users_defaults.postal_code)
-         | default(omit) }}
-    state: >-
-      {{ win_domain_users_item.state
-         | default(win_domain_users_defaults.state)
-         | default(omit) }}
-    state_province: >-
-      {{ win_domain_users_item.state_province
-         | default(win_domain_users_defaults.state_province)
-         | default(omit) }}
-    street: >-
-      {{ win_domain_users_item.street
-         | default(win_domain_users_defaults.street)
-         | default(omit) }}
-    surname: >-
-      {{ win_domain_users_item.surname
-         | default(win_domain_users_defaults.surname)
-         | default(omit) }}
-    update_password: >-
-      {{ win_domain_users_item.update_password
-         | default(win_domain_users_defaults.update_password)
-         | default(omit) }}
-    upn: >-
-      {{ win_domain_users_item.upn
-         | default(win_domain_users_defaults.upn)
-         | default(omit) }}
-    user_cannot_change_password: >-
-      {{ win_domain_users_item.user_cannot_change_password
-         | default(win_domain_users_defaults.user_cannot_change_password)
-         | default(omit) }}
-  when: >-
-    (not win_domain_users_item.overwrite | default(True))
-    and (win_domain_users_item.state | default('present')) == 'present'
-  loop: "{{ win_domain_users_to_manage }}"
-  loop_control:
-    loop_var: win_domain_users_item
-    index_var: win_domain_users_index
-    label: "{{ win_domain_users_item.name }}"
-  no_log: "{{ win_domain_users_no_log }}"
   vars:
     win_domain_users_to_manage: >-
       {{ win_domain_users
@@ -190,7 +47,69 @@
             | ternary(win_domain_users_hostvars
                       | default([])
                       | flatten, [])) }}
-  check_mode: yes
+    domain_password: >-
+      {{ win_domain_users_item.domain_password
+         | default(win_domain_users_defaults.domain_password)
+         | default("") }}
+    domain_server: >-
+      {{ win_domain_users_item.domain_server
+         | default(win_domain_users_defaults.domain_server)
+         | default("") }}
+    domain_username: >-
+      {{ win_domain_users_item.domain_username
+         | default(win_domain_users_defaults.domain_username)
+         | default("") }}
+    name: >-
+      {{ win_domain_users_item.name
+         | default(win_domain_users_defaults.name)
+         | default("") }}
+    identity: >-
+      {{ win_domain_users_item.identity
+         | default(win_domain_users_defaults.identity)
+         | default(name) }}
+  win_shell: |-
+    # Parameters
+    $domain_password="{{ domain_password }}"
+    $domain_server="{{ domain_server }}"
+    $domain_username="{{ domain_username }}"
+    $name="{{ name }}"
+    $identity="{{ identity }}"
+
+    # External domain server
+    $extra_args = @{}
+    If ("" -ne $domain_username) {
+        $domain_password = ConvertTo-SecureString $domain_password `
+          -AsPlainText -Force
+        $credential = New-Object `
+          -TypeName System.Management.Automation.PSCredential`
+          -ArgumentList $domain_username, $domain_password
+        $extra_args.Credential = $credential
+    }
+    If ("" -ne $domain_server) {
+        $extra_args.Server = $domain_server
+    }
+
+    # User detection
+    Try {
+        $user_obj = Get-ADUser `
+          -Identity $identity `
+          -ErrorAction SilentlyContinue `
+          -Properties * @extra_args
+    }
+    Catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
+        $user_obj = $null
+    }
+    If ($user_obj) { "present" } Else { "absent" }
+  when: >-
+    (not win_domain_users_item.overwrite | default(False))
+    and (win_domain_users_item.state | default('present')) == 'present'
+  loop: "{{ win_domain_users_to_manage }}"
+  loop_control:
+    loop_var: win_domain_users_item
+    index_var: win_domain_users_index
+    label: "{{ win_domain_users_item.name }} - {{ win_domain_users_item.state }}"
+  changed_when: no
+  no_log: "{{ win_domain_users_no_log }}"
   register: get_domain_users_result
   tags:
     - role::win_domain_users
@@ -309,18 +228,6 @@
       {{ win_domain_users_item.user_cannot_change_password
          | default(win_domain_users_defaults.user_cannot_change_password)
          | default(omit) }}
-  # noqa 503
-  when: >-
-    ((win_domain_users_item.state | default('present')) == 'absent')
-    | ternary(True,
-      (win_domain_users_item.overwrite | default(True))
-      or not get_domain_users_result.results[win_domain_users_index].changed)
-  loop: "{{ win_domain_users_to_manage }}"
-  loop_control:
-    loop_var: win_domain_users_item
-    index_var: win_domain_users_index
-    label: "{{ win_domain_users_item.name }}"
-  no_log: "{{ win_domain_users_no_log }}"
   vars:
     win_domain_users_to_manage: >-
       {{ win_domain_users
@@ -328,5 +235,21 @@
             | ternary(win_domain_users_hostvars
                       | default([])
                       | flatten, [])) }}
+    overwrite_user: "{{ win_domain_users_item.overwrite | default(False) }}"
+    user_should_be_absent: >-
+      {{ (win_domain_users_item.state | default('present')) == 'absent' }}
+    user_is_present: >-
+      {{ "present" in
+      (get_domain_users_result.results[win_domain_users_index].stdout
+      | default("absent")) }}
+  when: >-
+    user_should_be_absent | ternary(True, overwrite_user or not user_is_present)
+  loop: "{{ win_domain_users_to_manage }}"
+  loop_control:
+    loop_var: win_domain_users_item
+    index_var: win_domain_users_index
+    label: >-
+      {{ win_domain_users_item.name }}
+  no_log: "{{ win_domain_users_no_log }}"
   tags:
     - role::win_domain_users
