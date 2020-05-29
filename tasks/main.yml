@@ -109,6 +109,7 @@
     index_var: win_domain_users_index
     label: "{{ win_domain_users_item.name }} - {{ win_domain_users_item.state }}"
   changed_when: no
+  no_log: "{{ win_domain_users_no_log }}"
   register: get_domain_users_result
   tags:
     - role::win_domain_users
