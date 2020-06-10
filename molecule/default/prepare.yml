@@ -4,7 +4,8 @@
   hosts: all
   gather_facts: yes
   tasks:
-    - wait_for_connection:
+    - name: Wait for connection
+      wait_for_connection:
 
     - name: Install AD
       win_feature:
@@ -40,9 +41,10 @@
       when: >-
         ad_install_result.reboot_required
         or ad_feature_result.reboot_required
-        or domain_install_result.changed
+        or domain_install_result is changed
 
-    - wait_for_connection:
+    - name: Wait for connection
+      wait_for_connection:
 
     - name: Win ping
       win_ping:
