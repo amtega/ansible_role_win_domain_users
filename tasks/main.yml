@@ -110,7 +110,7 @@
     label: "{{ win_domain_users_item.name }} - {{ win_domain_users_item.state }}"
   changed_when: no
   no_log: "{{ win_domain_users_no_log }}"
-  register: get_domain_users_result
+  register: win_domain_users_get_domain_users_result
   tags:
     - role::win_domain_users
 
@@ -228,6 +228,7 @@
       {{ win_domain_users_item.user_cannot_change_password
          | default(win_domain_users_defaults.user_cannot_change_password)
          | default(omit) }}
+  register: win_domain_users_setup_result
   vars:
     win_domain_users_to_manage: >-
       {{ win_domain_users
@@ -240,7 +241,8 @@
       {{ (win_domain_users_item.state | default('present')) == 'absent' }}
     user_is_present: >-
       {{ "present" in
-      (get_domain_users_result.results[win_domain_users_index].stdout
+      (win_domain_users_get_domain_users_result
+       .results[win_domain_users_index].stdout
       | default("absent")) }}
   when: >-
     user_should_be_absent | ternary(True, overwrite_user or not user_is_present)
