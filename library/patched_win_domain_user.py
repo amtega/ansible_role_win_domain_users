@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see COPYING or
+# https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # this is a windows documentation stub.  actual code lives in the .ps1
 # file of the same name
@@ -35,7 +36,8 @@ options:
     description:
       - When C(present), creates or updates the user account.
       - When C(absent), removes the user account if it exists.
-      - When C(query), retrieves the user account details without making any changes.
+      - When C(query), retrieves the user account details without making any
+        changes.
     type: str
     choices: [ absent, present, query ]
     default: present
@@ -49,8 +51,10 @@ options:
     description:
       - C(no) will unlock the user account if locked.
       - Note that there is not a way to lock an account as an administrator.
-      - Accounts are locked due to user actions; as an admin, you may only unlock a locked account.
-      - If you wish to administratively disable an account, set I(enabled) to C(no).
+      - Accounts are locked due to user actions; as an admin, you may only
+        unlock a locked account.
+      - If you wish to administratively disable an account, set I(enabled) to
+        C(no).
     choices: [ no ]
   description:
     description:
@@ -60,13 +64,15 @@ options:
     description:
       - Adds or removes the user from this list of groups,
         depending on the value of I(groups_action).
-      - To remove all but the Principal Group, set C(groups=<principal group name>) and
-        I(groups_action=replace).
-      - Note that users cannot be removed from their principal group (for example, "Domain Users").
+      - To remove all but the Principal Group, set
+        C(groups=<principal group name>) and I(groups_action=replace).
+      - Note that users cannot be removed from their principal group (for
+        example, "Domain Users").
     type: list
   groups_action:
     description:
-      - If C(add), the user is added to each group in I(groups) where not already a member.
+      - If C(add), the user is added to each group in I(groups) where not
+        already a member.
       - If C(remove), the user is removed from each group in I(groups).
       - If C(replace), the user is added as a member of each group in
         I(groups) and removed from any other groups.
@@ -83,7 +89,8 @@ options:
     description:
       - C(always) will always update passwords.
       - C(on_create) will only set the password for newly created users.
-      - C(when_changed) will only set the password when changed (added in ansible 2.9).
+      - C(when_changed) will only set the password when changed (added in
+        ansible 2.9).
     type: str
     choices: [ always, on_create, when_changed ]
     default: always
@@ -162,8 +169,8 @@ options:
   attributes:
     description:
       - A dict of custom LDAP attributes to set on the user.
-      - This can be used to set custom attributes that are not exposed as module
-        parameters, e.g. C(telephoneNumber).
+      - This can be used to set custom attributes that are not exposed as
+        module parameters, e.g. C(telephoneNumber).
       - See the examples on how to format this parameter.
     type: str
     version_added: '2.5'
@@ -226,7 +233,8 @@ EXAMPLES = r'''
     attributes:
       telephoneNumber: 555-123456
 
-- name: Ensure user bob is created and use custom credentials to create the user
+- name: Ensure user bob is created and use custom credentials to create the
+  user
   patched_win_domain_user:
     name: bob
     firstname: Bob
