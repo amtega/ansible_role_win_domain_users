@@ -51,11 +51,12 @@ This is an example playbook:
 
 ## Testing
 
-Tests are based on molecule with vagrant virtual machines. Follow the instructions in `molecule/default/INSTALL.rst`.
+Tests are based on [molecule with vagrant virtual machines](https://molecule.readthedocs.io/en/latest/installation.html).
 
 ```shell
-$ cd amtega.win_domain_users
-$ molecule test
+cd amtega.win_domain_users
+
+molecule test
 ```
 
 ## License

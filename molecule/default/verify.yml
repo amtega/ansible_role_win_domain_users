@@ -36,7 +36,8 @@
             City: "springfield"
             Company: "evil_inc"
             Description: "Test user ansible_test_user-a please erase me."
-            DistinguishedName: "CN=ansible_test_user-a,CN=Users,DC=test,DC=local"
+            DistinguishedName: >-
+              CN=ansible_test_user-a,CN=Users,DC=test,DC=local
             EmailAddress: "dont_ask@dont_respond.never.com"
             Enabled: true
             GivenName: "ansible test A"
@@ -49,7 +50,8 @@
             City: "springfield"
             Company: "evil_inc"
             Description: "Test user ansible_test_user-b please erase me."
-            DistinguishedName: "CN=ansible_test_user-b,OU=Test,DC=test,DC=local"
+            DistinguishedName: >-
+              CN=ansible_test_user-b,OU=Test,DC=test,DC=local
             EmailAddress:
             Enabled: true
             GivenName:
@@ -118,7 +120,9 @@
           - user.EmailAddress == desired[user.SamAccountName].EmailAddress
           - user.LockedOut == desired[user.SamAccountName].LockedOut
           - user.SamAccountName == desired[user.SamAccountName].SamAccountName
-          - user.UserPrincipalName == desired[user.SamAccountName].UserPrincipalName
+          - >-
+            user.UserPrincipalName
+            == desired[user.SamAccountName].UserPrincipalName
           - user.City == desired[user.SamAccountName].City
           - user.Company == desired[user.SamAccountName].Company
       loop: "{{ result }}"
