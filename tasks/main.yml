@@ -101,7 +101,7 @@
     }
     If ($user_obj) { "present" } Else { "absent" }
   when: >-
-    (not win_domain_users_item.overwrite | default(False))
+    (not win_domain_users_item.overwrite | default(false) | bool)
     and (win_domain_users_item.state | default('present')) == 'present'
   loop: "{{ win_domain_users_to_manage }}"
   loop_control:
@@ -236,7 +236,8 @@
             | ternary(win_domain_users_hostvars
                       | default([])
                       | flatten, [])) }}
-    overwrite_user: "{{ win_domain_users_item.overwrite | default(False) }}"
+    overwrite_user: >-
+      {{ win_domain_users_item.overwrite | default(false) | bool }}
     user_should_be_absent: >-
       {{ (win_domain_users_item.state | default('present')) == 'absent' }}
     user_is_present: >-
@@ -245,7 +246,8 @@
        .results[win_domain_users_index].stdout
       | default("absent")) }}
   when: >-
-    user_should_be_absent | ternary(True, overwrite_user or not user_is_present)
+    (user_should_be_absent)
+    | ternary(true, overwrite_user or not user_is_present)
   loop: "{{ win_domain_users_to_manage }}"
   loop_control:
     loop_var: win_domain_users_item
