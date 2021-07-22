@@ -26,7 +26,7 @@
     } else {
         $false
     }
-  register: win_domain_users_cmdlets_check
+  register: win_domain_users_cmdlets_check_result
   changed_when: no
   no_log: "{{ win_domain_users_no_log }}"
   tags:
@@ -36,7 +36,7 @@
 - name: Assert availability of cmdlets
   assert:
     that:
-      - (win_domain_users_cmdlets_check.stdout | trim | bool)
+      - (win_domain_users_cmdlets_check_result.stdout | trim | bool)
   no_log: "{{ win_domain_users_no_log }}"
 
 - name: Find out what users would be overwritten
