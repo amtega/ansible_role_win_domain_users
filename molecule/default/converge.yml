@@ -25,7 +25,7 @@
             firstname: "ansible test A"
             surname: test
             email: dont_ask@dont_respond.never.com
-            account_locked: false
+            account_locked: no
             attributes:
               telephoneNumber: 555-123456
             state: present
@@ -60,18 +60,18 @@
             description: >-
               Test user {{ win_domain_users_tests_ad_user }}-c please erase me.
             email: dont_ask@dont_respond.never.com
-            enabled: true
+            enabled: grp_all_legacy_servers_group
             firstname: Jane
             groups:
               - Domain Users
             groups_action: add
             # password_expired: no
-            password_never_expires: false
+            password_never_expires: no
             postal_code: 12345
             state_province: TE
             street: 13 Elm
             surname: Doe
-            user_cannot_change_password: false
+            user_cannot_change_password: no
           - name: "{{ win_domain_users_tests_ad_user }}-d"
             state: absent
           - name: "{{ win_domain_users_tests_ad_user }}-e"

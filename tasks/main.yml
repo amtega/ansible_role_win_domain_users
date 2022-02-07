@@ -4,23 +4,24 @@
 - name: Check availability of cmdlets
   win_shell: |
     if (
-        (Get-Command -Name New-ADUser -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Get-ADUser -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Set-ADUser -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Remove-ADUser -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Get-ADPrincipalGroupMembership -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Add-ADGroupMember -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Remove-ADGroupMember -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Set-ADAccountPassword -ErrorAction SilentlyContinue) `
-        -and `
-        (Get-Command -Name Unlock-ADAccount -ErrorAction SilentlyContinue) `
+        (Get-Command -Name New-ADUser `
+                     -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Get-ADUser `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Set-ADUser `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Remove-ADUser `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Get-ADPrincipalGroupMembership `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Add-ADGroupMember `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Remove-ADGroupMember `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Set-ADAccountPassword `
+                          -ErrorAction SilentlyContinue) `
+        -and (Get-Command -Name Unlock-ADAccount `
+                          -ErrorAction SilentlyContinue) `
     ) {
         $true
     } else {
@@ -107,7 +108,8 @@
   loop_control:
     loop_var: win_domain_users_item
     index_var: win_domain_users_index
-    label: "{{ win_domain_users_item.name }} - {{ win_domain_users_item.state }}"
+    label: >-
+      {{ win_domain_users_item.name }} - {{ win_domain_users_item.state }}
   changed_when: no
   no_log: "{{ win_domain_users_no_log }}"
   register: win_domain_users_get_domain_users_result
