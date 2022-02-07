@@ -39,9 +39,9 @@
             DistinguishedName: >-
               CN=ansible_test_user-a,CN=Users,DC=test,DC=local
             EmailAddress: "dont_ask@dont_respond.never.com"
-            Enabled: true
+            Enabled: yes
             GivenName: "ansible test A"
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-a"
             SamAccountName: "ansible_test_user-a"
             Surname: "test"
@@ -53,9 +53,9 @@
             DistinguishedName: >-
               CN=ansible_test_user-b,OU=Test,DC=test,DC=local
             EmailAddress:
-            Enabled: true
+            Enabled: yes
             GivenName:
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-b"
             SamAccountName: "ansible_test_user-b"
             Surname:
@@ -66,9 +66,9 @@
             Description: "Test user ansible_test_user-c please erase me."
             DistinguishedName: "CN=ansible_test_user-c,OU=Test,DC=test,DC=local"
             EmailAddress: "dont_ask@dont_respond.never.com"
-            Enabled: true
+            Enabled: yes
             GivenName: "Jane"
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-c"
             SamAccountName: "ansible_test_user-c"
             Surname: "Doe"
@@ -79,9 +79,9 @@
             Description: "Test user ansible_test_user-e please erase me."
             DistinguishedName: "CN=ansible_test_user-e,OU=Test,DC=test,DC=local"
             EmailAddress:
-            Enabled: true
+            Enabled: yes
             GivenName:
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-e"
             SamAccountName: "ansible_test_user-e"
             Surname:
@@ -92,9 +92,9 @@
             Description: "Test user ansible_test_user-f please erase me."
             DistinguishedName: "CN=ansible_test_user-f,OU=Test,DC=test,DC=local"
             EmailAddress:
-            Enabled: true
+            Enabled: yes
             GivenName:
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-f"
             SamAccountName: "ansible_test_user-f"
             Surname:
@@ -105,14 +105,15 @@
             Description: "Test user ansible_test_user-g please erase me."
             DistinguishedName: "CN=ansible_test_user-g,OU=Test,DC=test,DC=local"
             EmailAddress:
-            Enabled: true
+            Enabled: yes
             GivenName:
-            LockedOut: false
+            LockedOut: no
             Name: "ansible_test_user-g"
             SamAccountName: "ansible_test_user-g"
             Surname:
             UserPrincipalName: "ansible_test_user-g@test.local"
       assert:
+        quiet: yes
         that:
           - user.Description == desired[user.SamAccountName].Description
           - user.GivenName == desired[user.SamAccountName].GivenName
